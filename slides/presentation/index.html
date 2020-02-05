@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Esri Dev Summit 2020 - Iris Yang</title>
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="../../libs/reveal.js/css/reset.css">
+	<link rel="stylesheet" href="../../libs/reveal.js/css/reveal.css">
+	<link rel="stylesheet" href="../../libs/reveal.js/css/theme/black.css" id="theme">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="../../libs/reveal.js/lib/css/monokai.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? '../../libs/reveal.js/css/print/pdf.css' : '../../libs/reveal.js/css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+
+	<!--[if lt IE 9]>
+		<script src="../../libs/reveal.js/lib/js/html5shiv.js"></script>
+		<![endif]-->
+</head>
+
+<body>
+
+	<div class="reveal">
+
+		<!-- Any section element inside of this container is displayed as a slide -->
+		<div class="slides">
+			<section>
+				<p>
+					<small>Esri Developer Summit 2020
+					</small>
+				</p>
+				<h2>Integration of GIS &amp; BIM Collaboration Format (BCF)</h2>
+				<p style="color: #42affa;">Iris Yang</p>
+			</section>
+			<section>
+				<section>
+					<h2>Introduction</h2>
+				</section>
+				<section style="text-align: left;">
+					<h2>About Me</h2>
+					<p class="fragment">Background in Computer Aided Engineering/Civil</p class="fragment">
+					<p class="fragment">Work in Arup as an Design Automation Developer</p class="fragment">
+					<p class="fragment">Focused on website development, parametric design, workflow automation and AR/VR
+					</p class="fragment">
+				</section>
+				<section data-background="./assets/images/web app.png">
+					<div
+						style="position: absolute; width: 40%; right: 0; bottom: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 5px 25px rgba(0,0,0,0.2); background-color: rgba(255,255,255,0.9); color: black; padding: 20px; font-size: 26px; text-align: left;">
+						<h2 style="color:black">What is this presentation about?</h2>
+						<p>A GIS-BCF integration web app using React & ArcGIS JavaScript API</p>
+					</div>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Background</h2>
+				</section>
+				<section data-background="./assets/images/word cloud middle.png">
+				</section>
+				<section style="text-align: left;">
+					<h3>BIM Collaboration Format (BCF)</h3>
+					<p style="font-size: 24px;">The BIM Collaboration Format (BCF) is a structured file format suited
+						to <span style="color: #42affa;">issue tracking</span> with
+						a building information model. BCF is designed primarily for defining <span
+							style="color: #42affa;">views</span> of a
+						building model
+						and associated information on collisions and errors connected with specific objects in the view.
+						The BCF file format allows users of different BIM software, and/or different disciplines to
+						collaborate on issues with the project. </p>
+					<image src="./assets/images/revit view.png" style="height:250px"></image>
+					<image src="./assets/images/navisworks view.png" style="height:250px"></image>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Backend</h2>
+				</section>
+				<section>
+					<h2>Workflow</h2>
+					<image src="./assets/images/workflow.png"></image>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Frontend</h2>
+				</section>
+				<section data-background="./assets/images/web app.png">
+				</section>
+				<section>
+					<h2>Node Modules</h2>
+					<p>npm install
+						<a href="https://github.com/Esri/react-arcgis" target="_blank">@esri/react-arcgis</a>
+						<a href="https://github.com/Esri/esri-loader" target="_blank">esri-loader</a>
+						<a href="https://material-ui.com/" target="_blank">@material-ui/core</a>
+						<a href="https://material-ui.com/components/material-icons/"
+							target="_blank">@material-ui/icons</a>
+						<a href="https://github.com/gregnb/mui-datatables" target="_blank">mui-datatables</a>
+					</p>
+				</section>
+				<section>
+					<h2>App Component</h2>
+					<pre><code class="language-html" data-trim data-line-numbers="1-12|2-7|8-11">
+						&lt;div&gt;
+							&lt;BCFMap 
+								updateMapView = {this.updateMapView}
+								updateCameras = {this.updateCameras}
+								bcfData = {this.state.bcfData}
+								goTo = {this.goTo} &gt;
+							&lt;/BCFMap&gt;
+							&lt;IssueTable 
+								updateBCFData = {this.updateBCFData}
+								goTo = {this.goTo} &gt;
+							&lt;/IssueTable&gt;
+						&lt;/div&gt;
+					</code></pre>
+				</section>
+				<section>
+					<h2>goTo Function</h2>
+					<p>Class: esri/views/SceneView</p>
+					<p>
+						<a
+							href="https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html#goTo">
+							goTo
+						</a>(target, options?)</p>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-7">
+						goTo = (id) => {
+							var view = this.state.view;
+							if (view){
+								view.goTo(this.state.cameras[id]);
+								this.setState({view: view});
+							};
+						}
+					</code></pre>
+					<p>Sets the view to a given target</p>
+				</section>
+				<section>
+					<h2>BCFMap Component</h2>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-17|5-10,13|1-3,14" style="font-size: 19px;line-height: 1.2em;">
+						handleMapLoad = (map, view) => {
+							//do something...
+						}
+						render() {
+							var mapProperties = {portalItem: {
+								id: this.state.config.sceneID,
+								portal: {
+									url: this.state.config.portalUrl
+								}
+							}}
+							return(
+								&lt;WebScene
+									mapProperties = {mapProperties}
+									onLoad = {this.handleMapLoad}&gt;
+								&lt;/WebScene&gt;
+							)
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>config.json</h2>
+					<pre><code class="hljs json" data-trim data-line-numbers="1-19|2-4|5-6|7-18" style="font-size: 17px;line-height: 1.2em;">
+						{
+							"getJiraIssuesApiUrl": "https://solibri-link.azurewebsites.net/api/GetJiraIssuesByProject",
+							"jiraUrl": "https://ovearup.atlassian.net",
+							"projectKey": "BCFGIS",
+							"portalUrl": "https://digitalau.arup.com/portal/",
+							"sceneID": "86c1d1bbaa7d4dc2b972a88c338ff46b",
+							"customFields": [
+								{
+									"id": "customfield_10335",
+									"name": "Disciplines",
+									"isMultiple": true
+								},
+								{
+									"id": "customfield_10336",
+									"name": "Design Phase",
+									"isMultiple": false
+								}
+							]
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>handleMapLoad Function</h2>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-10">
+						handleMapLoad = (map, view) => {
+							var featureLayer = initializeFeatureLayer(this.props.bcfData);
+							view.map.add(featureLayer);
+							view.ui.add(new Home({view:view}), "top-left");
+							view.on("click", eventHandler);
+							function eventHandler(event) {
+								view.hitTest(event).then(highlightIssue)
+							}
+						}
+					</code></pre>
+					<p style="font-size: xx-large;">Access the map and view instances directly after they are loaded</p>
+				</section>
+				<section>
+					<h2>esri Loader</h2>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-13">
+						import { loadModules } from 'esri-loader';
+						...
+						componentDidMount(){
+							loadModules([
+							"esri/layers/FeatureLayer",
+							"esri/Camera",
+							"esri/geometry/projection",
+							"esri/geometry/SpatialReference",
+							"esri/widgets/Home"], { css: true })
+							.then(([FeatureLayer, Camera, projection, SpatialReference, Home]) => {
+								//do something
+							});
+						}
+					</code></pre>
+					<p style="font-size: xx-large;">A library to help you use the ArcGIS API for JavaScript in
+						applications built with JavaScript frameworks and bundlers.</p>
+				</section>
+				<section>
+					<h2>IssueTable Component</h2>
+					<pre><code class="language-html" data-trim data-line-numbers="1-10">
+						&lt;div id="IssueTable" style={style}&gt;
+							&lt;MuiThemeProvider theme={theme}&gt;
+								&lt;MUIDataTable 
+									title = "Issues" 
+									columns = {columns} 
+									data = {this.state.data} 
+									options = {options}&gt;
+								&lt;/MUIDataTable&gt;
+							&lt;/MuiThemeProvider&gt;
+						&lt;/div&gt;
+					</code></pre>
+				</section>
+				<section>
+					<h2>MUIDatatable columns</h2>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-17|7-13" style="font-size: 19px;line-height: 1.2em;">
+						const columns = [
+						...
+						{
+							name: "Issue ID",
+							options: {
+								filter: false,
+								customBodyRender: (value, tableMeta, updateValue) => {
+									return (
+										&lt;Link href={config.jiraUrl+value} target="_blank"&gt;
+											{value}
+										&lt;/Link&gt;
+									);
+								}
+							}
+						},
+						...
+						]
+					</code></pre>
+				</section>
+				<section>
+					<h2>MUIDatatable columns</h2>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-21|7-12|13-17" style="font-size: 15.5px;line-height: 1.2em;">
+						const columns = [
+						...
+						{
+							name: "Assignee",
+							options: {
+								filter: true,
+								filterOptions: {
+									names: this.state.assigneeOptions,
+									logic(value, filter) {
+										return !value.includes(filter)
+									}
+								},
+								customBodyRender: (value, tableMeta, updateValue) => {
+									var label = value.split(',')[0];
+									var src = value.split(',')[1];
+									return (&lt;LabelAvatar label={label} src={src} /&gt;);
+								}
+							}
+						},
+						...
+						]
+					</code></pre>
+					</p>
+				</section>
+			</section>
+			<section>
+				<h2>Thank You!</h2>
+			</section>
+		</div>
+
+	</div>
+
+	<!-- <script src="../../libs/reveal.js/lib/js/head.min.js"></script> -->
+	<script src="../../libs/reveal.js/js/reveal.js"></script>
+
+	<script>
+
+		// More info https://github.com/hakimel/reveal.js#configuration
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			center: true,
+			hash: true,
+
+			transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+			// More info https://github.com/hakimel/reveal.js#dependencies
+			dependencies: [
+				{ src: '../../libs/reveal.js/plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+				{ src: '../../libs/reveal.js/plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+				{ src: '../../libs/reveal.js/plugin/highlight/highlight.js' },
+				{ src: '../../libs/reveal.js/plugin/search/search.js', async: true },
+				{ src: '../../libs/reveal.js/plugin/zoom-js/zoom.js', async: true },
+				{ src: '../../libs/reveal.js/plugin/notes/notes.js', async: true }
+			]
+		});
+
+	</script>
+
+</body>
+
+</html>
