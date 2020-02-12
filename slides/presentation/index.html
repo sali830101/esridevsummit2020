@@ -98,7 +98,7 @@
 				<section>
 					<h2>Frontend</h2>
 				</section>
-				<section data-background="./assets/images/web app middle.png">
+				<section data-background-video="./assets/videos/bcf-gis.mp4">
 				</section>
 				<section>
 					<h2>Node Modules</h2>
@@ -113,17 +113,20 @@
 				</section>
 				<section>
 					<h2>App Component</h2>
-					<pre><code class="language-html" data-trim data-line-numbers="1-12|2-7|8-11">
+					<pre><code class="language-html" data-trim data-line-numbers="1-15|2-8|9-14" style="font-size: 21px;line-height: 1.2em;">
 						&lt;div&gt;
 							&lt;BCFMap 
 								updateMapView = {this.updateMapView}
 								updateCameras = {this.updateCameras}
 								bcfData = {this.state.bcfData}
-								goTo = {this.goTo} &gt;
+								goTo = {this.goTo}
+								config = {this.state.config} &gt;
 							&lt;/BCFMap&gt;
 							&lt;IssueTable 
 								updateBCFData = {this.updateBCFData}
-								goTo = {this.goTo} &gt;
+								goTo = {this.goTo}
+								config = {this.state.config}
+								issues = {this.state.issues} &gt;
 							&lt;/IssueTable&gt;
 						&lt;/div&gt;
 					</code></pre>
@@ -138,36 +141,12 @@
 						</a>(target, options?)</p>
 					<pre><code class="hljs javascript" data-trim data-line-numbers="1-7">
 						goTo = (id) => {
-							var view = this.state.view;
-							if (view){
-								view.goTo(this.state.cameras[id]);
-								this.setState({view: view});
+							if (this.view){
+								this.view.goTo(this.state.cameras[id]);
 							};
 						}
 					</code></pre>
 					<p>Sets the view to a given target</p>
-				</section>
-				<section>
-					<h2>BCFMap Component</h2>
-					<pre><code class="hljs javascript" data-trim data-line-numbers="1-17|5-10,13|1-3,14" style="font-size: 19px;line-height: 1.2em;">
-						handleMapLoad = (map, view) => {
-							//do something...
-						}
-						render() {
-							var mapProperties = {portalItem: {
-								id: this.state.config.sceneID,
-								portal: {
-									url: this.state.config.portalUrl
-								}
-							}}
-							return(
-								&lt;WebScene
-									mapProperties = {mapProperties}
-									onLoad = {this.handleMapLoad}&gt;
-								&lt;/WebScene&gt;
-							)
-						}
-					</code></pre>
 				</section>
 				<section>
 					<h2>config.json</h2>
@@ -190,6 +169,28 @@
 									"isMultiple": false
 								}
 							]
+						}
+					</code></pre>
+				</section>
+				<section>
+					<h2>BCFMap Component</h2>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-17|5-10,13|1-3,14" style="font-size: 19px;line-height: 1.2em;">
+						handleMapLoad = (map, view) => {
+							//do something...
+						}
+						render() {
+							var mapProperties = {portalItem: {
+								id: this.state.config.sceneID,
+								portal: {
+									url: this.state.config.portalUrl
+								}
+							}}
+							return(
+								&lt;WebScene
+									mapProperties = {mapProperties}
+									onLoad = {this.handleMapLoad}&gt;
+								&lt;/WebScene&gt;
+							)
 						}
 					</code></pre>
 				</section>
@@ -243,28 +244,11 @@
 						&lt;/div&gt;
 					</code></pre>
 				</section>
-				<!-- <section>
-					<h2>MUIDatatable columns</h2>
-					<pre><code class="hljs javascript" data-trim data-line-numbers="1-17|7-13" style="font-size: 19px;line-height: 1.2em;">
-						const columns = [
-						...
-						{
-							name: "Issue ID",
-							options: {
-								filter: false,
-								customBodyRender: (value, tableMeta, updateValue) => {
-									return (
-										&lt;Link href={config.jiraUrl+value} target="_blank"&gt;
-											{value}
-										&lt;/Link&gt;
-									);
-								}
-							}
-						},
-						...
-						]
-					</code></pre>
-				</section> -->
+				<section>
+					<h2>MUIDataTable</h2>
+					<image src="./assets/images/custom renderer-before.png"></image>
+					<image class="fragment" src="./assets/images/custom renderer-after.png"></image>
+				</section>
 				<section>
 					<h2>MUIDatatable columns</h2>
 					<pre><code class="hljs javascript" data-trim data-line-numbers="1-21|7-12|13-17" style="font-size: 15.5px;line-height: 1.2em;">
@@ -289,6 +273,30 @@
 						},
 						...
 						]
+					</code></pre>
+					</p>
+				</section>
+				<section>
+					<h2>MUIDatatable onTableChange</h2>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-7">
+						onTableChange = (action, tableState) => {
+							var displayData = [];
+							for (var i = 0; i &lt; tableState.displayData.length; i++){
+								displayData.push(tableState.displayData[i].data[2].props.id)
+							}
+							this.props.updateDisplayData(displayData);
+						}
+					</code></pre>
+					<pre><code class="hljs javascript" data-trim data-line-numbers="1-9">
+						updateDisplayData = (displayData) => {
+							if (this.view){
+								var featureLayerView = this.view.layerViews.items[2];
+								var value = displayData.join("','");
+								featureLayerView.filter = {
+									where: `issueId IN ('${value}')`
+								};
+							};
+						}
 					</code></pre>
 					</p>
 				</section>
